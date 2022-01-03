@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <p id="p1"></p>
+    <p id="name"></p>
+    <input id="input" />
+    <button id="demo">SEND</button>
+    <ul id="list"></ul>
+
+    <script>
+      var socket = io();
+
+      socket.on("con", (con) => {
+        document.getElementById("p1").innerHTML = "online user " + con;
+      });
+
+      document.getElementById("demo").onclick = function () {
+        myFunction();
+      };
+      var chat = document.getElementById("chat");
+      var input = document.getElementById("input");
+
+      let person = prompt("Please enter your name", "");
+      document.getElementById("name").innerHTML = person;
+      socket.emit("user", person);
+      var mass;
+      function myFunction() {
+        socket.emit("message", { name: person, msg: input.value });
+        input.value = "";
+      }
+      socket.on("message", (msg) => {
+        var ul = document.getElementById("list");
+        var li = document.createElement("li");
+        li.appendChild(document.createTextNode(msg.name + ":  " + msg.msg));
+        ul.appendChild(li);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      socket.on("room", (id) => {});
+    </script>
+  </body>
+</html>
